@@ -8,9 +8,8 @@ class Demultiplex extends Transform
 
   _transform: (envelope, enc, next) =>
     {config,message} = envelope
-    items = message[config.value]
 
-    _.each items, @push
+    _.each config.value, @push
     @push null
     next()
 

@@ -7,7 +7,7 @@ describe 'Demultiplex', ->
   describe 'when called', ->
     beforeEach (done) ->
       @callback = sinon.spy(done)
-      @sut.write message: {a: []}, config: {value: 'a'}, @callback
+      @sut.write config: {value: []}, @callback
 
     it 'should have called done', ->
       expect(@callback).to.have.been.called
@@ -21,7 +21,7 @@ describe 'Demultiplex', ->
         while result = @sut.read()
           @results.push result
 
-      @sut.write message: {foo: ['item']}, config: {value: 'foo'}
+      @sut.write config: {value: ['item']}
 
     it 'should emit one message with the item', ->
       expect(@results).to.include 'item'
@@ -35,12 +35,12 @@ describe 'Demultiplex', ->
         while result = @sut.read()
           @results.push result
 
-      @sut.write message: {foo: ['item1', 'item2']}, config: {value: 'foo'}
+      @sut.write config: {value: ['item1', 'item2']}
 
     it 'should emit two messages, one for each item', ->
       expect(@results).to.include.same.members ['item1', 'item2']
 
-  describe 'when the config value points to a different key', ->
+  describe 'when the config value doesn\'t exist', ->
     beforeEach (done) ->
       @sut.on 'end', done
 
@@ -49,35 +49,7 @@ describe 'Demultiplex', ->
         while result = @sut.read()
           @results.push result
 
-      @sut.write message: {bar: ['item']}, config: {value: 'bar'}
-
-    it 'should emit one message with the item', ->
-      expect(@results).to.include 'item'
-
-  describe 'when the config value points to a key not in the message', ->
-    beforeEach (done) ->
-      @sut.on 'end', done
-
-      @results = []
-      @sut.on 'readable', =>
-        while result = @sut.read()
-          @results.push result
-
-      @sut.write message: {}, config: {value: 'bar'}
-
-    it 'should do nothing', ->
-      expect(@results).to.be.empty
-
-  describe 'when the config value is not set', ->
-    beforeEach (done) ->
-      @sut.on 'end', done
-
-      @results = []
-      @sut.on 'readable', =>
-        while result = @sut.read()
-          @results.push result
-
-      @sut.write message: {}, config: {}
+      @sut.write config: {}
 
     it 'should do nothing', ->
       expect(@results).to.be.empty
