@@ -9,7 +9,10 @@ class Demultiplex extends Transform
   _transform: (envelope, enc, next) =>
     {config,message} = envelope
 
-    _.each config.value, @push
+    _.each config.value, (value) =>
+      @push value
+      return
+
     @push null
     next()
 
