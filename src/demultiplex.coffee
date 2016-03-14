@@ -4,7 +4,6 @@ _ = require 'lodash'
 class Demultiplex extends Transform
   constructor: ->
     super objectMode: true
-    @push = _.bind @push, @
 
   _transform: (envelope, enc, next) =>
     {config,message} = envelope
