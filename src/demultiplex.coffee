@@ -7,9 +7,12 @@ class Demultiplex extends Transform
 
   _transform: (envelope, enc, next) =>
     {config,message} = envelope
+    { value } = config
 
-    _.each config.value, (value) =>
-      @push value
+    return @emit 'error', new Error 'Cannot demultiplex over this value' unless _.isArray(value) || _.isPlainObject(value)
+
+    _.each value, (v) =>
+      @push v
       return
 
     @push null

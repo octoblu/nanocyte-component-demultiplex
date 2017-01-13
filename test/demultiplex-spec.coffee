@@ -41,6 +41,17 @@ describe 'Demultiplex', ->
     it 'should emit two messages, one for each item', ->
       expect(@results).to.include.same.members ['item1', 'item2']
 
+
+  describe 'when a string is written', ->
+    beforeEach (done) ->
+      @sut.on 'end', done
+      @sut.on 'error', (@error) => done()
+      @sut.write config: {value: 'whatever'}
+
+    it 'should not emit any messages', ->
+      expect(@error).to.exist
+
+
   describe 'when a 100 element array is written', ->
     beforeEach (done) ->
       @sut.on 'end', done
@@ -86,13 +97,8 @@ describe 'Demultiplex', ->
   describe 'when the config value doesn\'t exist', ->
     beforeEach (done) ->
       @sut.on 'end', done
-
-      @results = []
-      @sut.on 'readable', =>
-        until (result = @sut.read()) == null
-          @results.push result
-
+      @sut.on 'error', (@error) => done()
       @sut.write config: {}
 
-    it 'should do nothing', ->
-      expect(@results).to.be.empty
+    it 'should emit an error', ->
+      expect(@error).to.exist
